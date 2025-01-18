@@ -1,0 +1,46 @@
+services:
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    restart: unless-stopped
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - ./volumes/beszel_data:/beszel_data
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.href=https://${SUBDOMINIO}.lan.${DOMINIO}
+      - homepage.instance.admin.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.admin.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.siteMonitor=https://${URL_WAN}
+      - homepage.instance.admin.widget.password=${HOMEPAGE_PASSWORD}
+      - homepage.instance.admin.widget.type=beszel
+      - homepage.instance.admin.widget.url=http://beszel:8090
+      - homepage.instance.admin.widget.username=${HOMEPAGE_USERNAME}
+      - homepage.instance.admin.widget.version=2
+      - homepage.instance.simple.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.simple.group=${HOMEPAGE_GRUPO}
+      - homepage.instance.simple.href=https://${URL_LAN}
+      - homepage.instance.simple.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.simple.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.simple.siteMonitor=https://${URL_WAN}
+      - homepage.instance.simple.widget.password=${HOMEPAGE_PASSWORD}
+      - homepage.instance.simple.widget.type=beszel
+      - homepage.instance.simple.widget.url=http://beszel:8090
+      - homepage.instance.simple.widget.username=${HOMEPAGE_USERNAME}
+      - homepage.instance.simple.widget.version=2
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${URL_LAN}`) || Host(`${URL_VPN}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=8090
+    networks:
+      - lan
+      - wireguard
+
+networks:
+  lan:
+    external: true
+  wireguard:
+    external: true
