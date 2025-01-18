@@ -1,0 +1,45 @@
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    volumes:
+      - ./volumes/audiobooks:/audiobooks
+      - ./volumes/books:/books
+      - ./volumes/podcasts:/podcasts
+      - ./volumes/config:/config
+      - ./volumes/metadata:/metadata
+    environment:
+      - TZ=Europe/Madrid
+    restart: unless-stopped
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.href=https://${URL_LAN}
+      - homepage.instance.admin.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.admin.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.siteMonitor=https://${URL_WAN}
+      - homepage.instance.admin.widget.key=${APIKEY}
+      - homepage.instance.admin.widget.type=audiobookshelf
+      - homepage.instance.admin.widget.url=http://audiobookshelf
+      - homepage.instance.simple.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.simple.group=${HOMEPAGE_GRUPO}
+      - homepage.instance.simple.href=https://${URL_LAN}
+      - homepage.instance.simple.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.simple.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.simple.siteMonitor=https://${URL_WAN}
+      - homepage.instance.simple.widget.key=${APIKEY}
+      - homepage.instance.simple.widget.type=audiobookshelf
+      - homepage.instance.simple.widget.url=http://audiobookshelf
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${URL_LAN}`) || Host(`${URL_VPN}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80
+    networks:
+      - lan
+      - wireguard
+
+networks:
+  lan:
+    external: true
+  wireguard:
+    external: true
