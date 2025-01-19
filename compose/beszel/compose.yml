@@ -5,7 +5,8 @@ services:
       - host.docker.internal:host-gateway
     image: henrygd/beszel:latest
     labels:
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=true # Esta etiqueta solo es útil si usas el contenedor watchtower
+      # Las siguientes etiquetas son un ejemplo para el uso de dos instancias de homepage. Si no usas homepage, puedes ignorarlas
       - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
       - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
       - homepage.instance.admin.href=https://${SUBDOMINIO}.lan.${DOMINIO}
@@ -28,6 +29,7 @@ services:
       - homepage.instance.simple.widget.url=http://beszel:8090
       - homepage.instance.simple.widget.username=${HOMEPAGE_USERNAME}
       - homepage.instance.simple.widget.version=2
+      # Las siguientes etiquetas son para integrase con traefik. Si no usas traefik, puedes ignorarlas
       - traefik.enable=true
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${URL_LAN}`) || Host(`${URL_VPN}`)

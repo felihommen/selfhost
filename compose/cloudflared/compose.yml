@@ -1,11 +1,7 @@
 services:
-  beszel-agent:
-    container_name: beszel-agent
-    environment:
-      PORT: 45876
-      FILESYSTEM: /
-      KEY: ${KEY}
-    image: henrygd/beszel-agent:latest
+  cloudflared:
+    command: tunnel --no-autoupdate run --token ${TOKEN}
+    image: cloudflare/cloudflared:latest
     labels:
       - com.centurylinklabs.watchtower.enable=true # Esta etiqueta solo es útil si usas el contenedor watchtower
       # Las siguientes etiquetas son un ejemplo para el uso de dos instancias de homepage. Si no usas homepage, puedes ignorarlas
@@ -13,9 +9,8 @@ services:
       - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
       - homepage.instance.admin.icon=${HOMEPAGE_ICONO}
       - homepage.instance.admin.name=${HOMEPAGE_NOMBRE}
-    network_mode: host
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /media/hdd:/extra-filesystems/media:ro
-      - /srv/backup:/extra-filesystems/backup:ro
+      - homepage.instance.admin.widget.accountid=${ACCOUNTID}
+      - homepage.instance.admin.widget.key=${KEY}
+      - homepage.instance.admin.widget.tunnelid=${TUNNELID}
+      - homepage.instance.admin.widget.type=cloudflared
+    restart: always
