@@ -1,15 +1,8 @@
 services:
   audiobookshelf:
-    image: ghcr.io/advplyr/audiobookshelf:latest
-    volumes:
-      - ./volumes/audiobooks:/audiobooks
-      - ./volumes/books:/books
-      - ./volumes/podcasts:/podcasts
-      - ./volumes/config:/config
-      - ./volumes/metadata:/metadata
     environment:
       - TZ=Europe/Madrid
-    restart: unless-stopped
+    image: ghcr.io/advplyr/audiobookshelf:latest
     labels:
       - com.centurylinklabs.watchtower.enable=true
       - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
@@ -37,6 +30,13 @@ services:
     networks:
       - lan
       - wireguard
+    restart: unless-stopped
+    volumes:
+      - ./volumes/audiobooks:/audiobooks
+      - ./volumes/books:/books
+      - ./volumes/podcasts:/podcasts
+      - ./volumes/config:/config
+      - ./volumes/metadata:/metadata
 
 networks:
   lan:

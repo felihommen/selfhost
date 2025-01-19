@@ -1,12 +1,9 @@
 services:
   actual_server:
-    image: docker.io/actualbudget/actual-server:latest
     environment:
       - ACTUAL_TRUSTED_PROXIES=[0.0.0.0/0]
       # See all options and more details at https://actualbudget.github.io/docs/Installing/Configuration
-    volumes:
-      - ./volumes/actual-data:/data
-    restart: unless-stopped
+    image: docker.io/actualbudget/actual-server:latest
     labels:
       - com.centurylinklabs.watchtower.enable=true
       - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
@@ -28,6 +25,9 @@ services:
     networks:
       - lan
       - wireguard
+    restart: unless-stopped
+    volumes:
+      - ./volumes/actual-data:/data
 
 networks:
   lan:
