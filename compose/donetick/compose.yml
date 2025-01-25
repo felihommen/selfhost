@@ -1,0 +1,38 @@
+services:
+  donetick:
+    image: donetick/donetick
+    container_name: donetick
+    restart: unless-stopped
+    volumes:
+      - ./volumes/data:/donetick-data
+      - ./volumes/config:/config
+    environment:
+      - DT_ENV=selfhosted
+      - DT_SQLITE_PATH=/donetick-data/donetick.db
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=${HOMEPAGE_DESCRIPTION}
+      - homepage.instance.admin.group=${HOMEPAGE_NAME}
+      - homepage.instance.admin.href=https://${URL_LAN}
+      - homepage.instance.admin.icon=${HOMEPAGE_ICON}
+      - homepage.instance.admin.name=${HOMEPAGE_NAME}
+      - homepage.instance.admin.siteMonitor=https://${URL_WAN}
+      - homepage.instance.simple.description=${HOMEPAGE_DESCRIPTION}
+      - homepage.instance.simple.group=${HOMEPAGE_GRUPO}
+      - homepage.instance.simple.href=https://${URL_LAN}
+      - homepage.instance.simple.icon=${HOMEPAGE_ICON}
+      - homepage.instance.simple.name=${HOMEPAGE_NAME}
+      - homepage.instance.simple.siteMonitor=https://${URL_WAN}
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${URL_LAN}`) || Host(`${URL_VPN}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=${PORT}
+    networks:
+      - lan
+      - wireguard
+
+networks:
+  lan:
+    external: true
+  wireguard:
+    external: true
