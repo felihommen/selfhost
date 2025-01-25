@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: docmost
+      POSTGRES_USER: docmost
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    restart: unless-stopped
+    volumes:
+      - ./volumes/db_data:/var/lib/postgresql/data
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=La base de datos relacional de código abierto más avanzada del mundo
+      - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.icon=postgres.png
+      - homepage.instance.admin.name=postgres
+      - wud.tag.include=^16-alpine$$'
+      - wud.watch.digest=true

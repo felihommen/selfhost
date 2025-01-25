@@ -1,0 +1,37 @@
+services:
+  docmost:
+    image: docmost/docmost:latest
+    depends_on:
+      - db
+      - redis
+    environment:
+      APP_URL: "https://${URL_LAN}"
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: "postgresql://docmost:${POSTGRES_PASSWORD}@db:5432/docmost?schema=public"
+      REDIS_URL: "redis://redis:6379"
+      PORT: ${PORT}
+    restart: unless-stopped
+    volumes:
+      - ./volumes/docmost:/app/data/storage
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.href=https://${URL_LAN}
+      - homepage.instance.admin.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.admin.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.siteMonitor=https://${URL_WAN}
+      - homepage.instance.simple.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.simple.group=${HOMEPAGE_GRUPO}
+      - homepage.instance.simple.href=https://${URL_LAN}
+      - homepage.instance.simple.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.simple.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.simple.siteMonitor=https://${URL_WAN}
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${URL_LAN}`) || Host(`${URL_VPN}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=${PORT}
+    networks:
+      - default
+      - lan
+      - wireguard

@@ -1,0 +1,14 @@
+services:
+  redis:
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    volumes:
+      - ./volumes/redis_data:/data
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=La plataforma de datos en tiempo real más querida del mundo
+      - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.icon=redis.png
+      - homepage.instance.admin.name=redis
+      - wud.tag.include=^7\.2-alpine$$'
+      - wud.watch.digest=true

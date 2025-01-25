@@ -1,0 +1,10 @@
+include:
+  - docmost.yml
+  - postgres.yml
+  - redis.yml
+
+networks:
+  lan:
+    external: true
+  wireguard:
+    external: true
