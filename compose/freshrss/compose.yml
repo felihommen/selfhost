@@ -1,0 +1,55 @@
+services:
+  freshrss:
+    image: lscr.io/linuxserver/freshrss:latest
+    container_name: freshrss
+    restart: always
+    logging:
+      options:
+        max-size: 10m
+    volumes:
+      - ./volumes/config:/config
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Madrid
+      CRON_MIN: "2,32"
+      FRESHRSS_ENV: production
+      LISTEN: 0.0.0.0:80
+      OIDC_ENABLED: 0
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.href=https://${URL_LAN}
+      - homepage.instance.admin.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.admin.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.siteMonitor=https://${URL_WAN}
+      - homepage.instance.admin.widget.fields=["subscriptions", "unread"]
+      - homepage.instance.admin.widget.password=${ADMIN_API_PASSWORD}
+      - homepage.instance.admin.widget.type=freshrss
+      - homepage.instance.admin.widget.url=http://freshrss
+      - homepage.instance.admin.widget.username=${ADMIN_API_USERNAME}
+      - homepage.instance.simple.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.simple.group=${HOMEPAGE_GRUPO}
+      - homepage.instance.simple.href=https://${URL_LAN}
+      - homepage.instance.simple.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.simple.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.simple.siteMonitor=https://${URL_WAN}
+      - homepage.instance.simple.widget.fields=["subscriptions", "unread"]
+      - homepage.instance.simple.widget.password=${ADMIN_API_PASSWORD}
+      - homepage.instance.simple.widget.type=freshrss
+      - homepage.instance.simple.widget.url=http://freshrss
+      - homepage.instance.simple.widget.username=${ADMIN_API_USERNAME}
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${URL_LAN}`) || Host(`${URL_VPN}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80
+    networks:
+      - lan
+      - wireguard
+
+networks:
+  lan:
+    external: true
+  wireguard:
+    external: true
