@@ -1,0 +1,38 @@
+services:
+  beaverhabits:
+    container_name: beaverhabits
+    user: 1000:1000
+    environment:
+      - HABITS_STORAGE=DATABASE # DATABASE stores in a single SQLite database named habits.db. USER_DISK option saves in a local json file.
+      - MAX_USER_COUNT=2
+    volumes:
+      - ./volumes/habits:/app/.user/
+    restart: unless-stopped
+    image: daya0576/beaverhabits:latest
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - homepage.instance.admin.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.admin.group=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.href=https://${URL_LAN}
+      - homepage.instance.admin.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.admin.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.admin.siteMonitor=https://${URL_WAN}
+      - homepage.instance.simple.description=${HOMEPAGE_DESCRIPCION}
+      - homepage.instance.simple.group=${HOMEPAGE_GRUPO}
+      - homepage.instance.simple.href=https://${URL_LAN}
+      - homepage.instance.simple.icon=${HOMEPAGE_ICONO}
+      - homepage.instance.simple.name=${HOMEPAGE_NOMBRE}
+      - homepage.instance.simple.siteMonitor=https://${URL_WAN}
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${URL_LAN}`) || Host(`${URL_VPN}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=8080
+    networks:
+      - lan
+      - wireguard
+
+networks:
+  lan:
+    external: true
+  wireguard:
+    external: true
